@@ -54,14 +54,14 @@ const props = defineProps({
     default: '123456'
   }
 })
-watch(() => { '$store.state.marketCurrentDataModule.curRoomId' }, (val, oldVal) => {
+watch(() => { useMarketCurrentData.curRoomId }, (val, oldVal) => {
   if (oldVal) {
     socket.value.emit('logout', oldVal)
   }
   if (val) {
     socket.value.emit('login', val)
   }
-})
+}, { deep: true })
 
 function initSocket() {
   const wsProtocal = process.env.NODE_ENV === 'development' ? 'ws' : 'wss'
@@ -76,38 +76,38 @@ function initSocket() {
   socket.on('TICK', (data) => {
     nextTick(() => {
       let tick = decodeTickField(data)
-      useMarketCurrentData.updateTick(useMarketCurrentData.$state, tick)
+      useMarketCurrentData.updateTick(tick)
     })
   })
   socket.on('BAR', (data) => {
     nextTick(() => {
       let bar = decodeBarField(data)
-      useMarketCurrentData.updateBar(useMarketCurrentData.$state, bar)
+      useMarketCurrentData.updateBar(bar)
     })
   })
   socket.on('ACCOUNT', (data) => {
     nextTick(() => {
       let account = decodeAccountField(data)
-      useAccount.updateAccount(useAccount.$state, account)
+      useAccount.updateAccount(account)
     })
   })
   socket.on('POSITION', (data) => {
     nextTick(() => {
       let position = decodePositionField(data)
-      useAccount.updatePosition(useAccount.$state, position)
+      useAccount.updatePosition(position)
     })
   })
   socket.on('TRADE', (data) => {
     let trade = decodeTradeField(data)
-    useAccount.updateTrade(useAccount.$state, trade)
+    useAccount.updateTrade(trade)
   })
   socket.on('ORDER', (data) => {
     let order = decodeOrderField(data)
-    useAccount.updateOrder(useAccount.$state, order)
+    useAccount.updateOrder(order)
   })
   socket.on('CONTRACT', (data) => {
     let contract = decodeContractField(data)
-    useContract.updateContract(useContract.$state, contract)
+    useContract.updateContract(contract)
   })
   socket.on('NOTICE', (data) => {
     let notice = decodeNoticeField(data)

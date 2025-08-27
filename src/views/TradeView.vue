@@ -150,12 +150,12 @@ function handleAccountChange() {
     accountCheckTimer = setTimeout(timelyCheck, 6000)
   }
   timelyCheck()
-  useMarketCurrentData.updateFocusMarketGatewayId(useMarketCurrentData.$state, chosenAccount.value.bindedMktGatewayId)
-  useAccount.updateCurAccountId(useAccount.$state, chosenAccount.value.gatewayId)
+  useMarketCurrentData.updateFocusMarketGatewayId(chosenAccount.value.bindedMktGatewayId)
+  useAccount.updateCurAccountId(chosenAccount.value.gatewayId)
 }
 function handleContractChange() {
   dealPriceType.value = 'OPP_PRICE'
-  useMarketCurrentData.updateFocusUnifiedSymbol(useMarketCurrentData.$state, contract.value.unifiedSymbol)
+  useMarketCurrentData.updateFocusUnifiedSymbol(contract.value.unifiedSymbol)
 }
 function searchContracts(query) {
   if (chosenAccount.value.gatewayId) {
@@ -236,8 +236,8 @@ function closePosition() {
 }
 onUnmounted(() => {
   clearTimeout(accountCheckTimer)
-  useAccount.resetAccountModule(useAccount.$state)
-  useMarketCurrentData.resetMarketCurrentDataModule(useMarketCurrentData.$state)
+  useAccount.resetAccountModule()
+  useMarketCurrentData.resetMarketCurrentDataModule()
 })
 
 

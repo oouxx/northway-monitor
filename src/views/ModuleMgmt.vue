@@ -213,7 +213,7 @@ let useModuleInfo = useModuleInfoStore()
 
 if (!useModuleInfo.moduleList.length) {
   moduleApi.getAllModules().then(modules => {
-    useModuleInfo.updateList(useModuleInfo.$state, modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName)))
+    useModuleInfo.updateList(modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName)))
   })
 }
 
@@ -261,7 +261,7 @@ function handleRow(index, row) {
 }
 async function handleDelete(index, row) {
   await moduleApi.removeModule(row.moduleName)
-  useModuleInfo.updateList(useModuleInfo.$state, useModuleInfo.moduleList.filter((item) => item.moduleName !== row.moduleName))
+  useModuleInfo.updateList(useModuleInfo.moduleList.filter((item) => item.moduleName !== row.moduleName))
 
   // 移除模组时，要把模组图表的指标设置从localStorage移除
   localStorage.removeItem(`autoUpdate_${row.moduleName}`)
@@ -295,8 +295,8 @@ async function autoRefreshList() {
   timer.value = setTimeout(autoRefreshList, 30000)   // 每30秒刷新一次
 }
 function updateModuleList(modules) {
-  useModuleInfo.updateList(useModuleInfo.$state, [])
-  useModuleInfo.updateList(useModuleInfo.$state, modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName)))
+  useModuleInfo.updateList([])
+  useModuleInfo.updateList(modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName)))
 }
 async function saveModule(module) {
   const rt = await moduleApi.getModuleRuntime(module.moduleName)
@@ -312,7 +312,7 @@ async function saveModule(module) {
   } else {
     useModuleInfo.moduleList[curTableIndex.value] = module
   }
-  useModuleInfo.updateList(useModuleInfo.$state, [...useModuleInfo.moduleList])
+  useModuleInfo.updateList([...useModuleInfo.moduleList])
 }
 function handleModuleCopy() {
   curTableIndex.value = -1

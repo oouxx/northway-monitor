@@ -85,8 +85,8 @@ async function loadBars(timestamp, loadMore) {
       !loadMore
     )
     return barDataList
-      .map((data) => decodeBarField(data)
-        .map((bar) => KLineUtils.createFromBar(bar))
+      .map((data) => decodeBarField(data))
+      .map((bar) => KLineUtils.createFromBar(bar))
   } catch (e) {
     ElMessage.error(e.message)
   } finally {
@@ -105,14 +105,14 @@ watch(() => props.contractUnifiedSymbol, (val) => {
   }
 })
 watch(gateway, (val) => {
-  marketCurrentDataStore.updateFocusMarketGatewayId(marketCurrentDataStore.$state, val)
+  marketCurrentDataStore.updateFocusMarketGatewayId(val)
 })
 
 watch(unifiedSymbol, (val) => {
-  marketCurrentDataStore.updateFocusUnifiedSymbol(marketCurrentDataStore.$state, val)
+  marketCurrentDataStore.updateFocusUnifiedSymbol(val)
 })
 
-watch(() => marketCurrentDataStore.curTick, () => {
+watch(() => marketCurrentDataStore.curTick, (tick) => {
   latency.value = new Date().getTime() - tick.actiontimestamp
 })
 watch(() => marketCurrentDataStore.curBar, (bar) => {

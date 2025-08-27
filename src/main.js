@@ -2,8 +2,6 @@
 import App from './App.vue'
 import router from './router'
 import { store } from '@/store'
-
-import NumberFilter from '@/filter/number-filter'
 import '@/assets/style/index.css'
 import './utils'
 import ElementPlus from 'element-plus'
@@ -16,8 +14,7 @@ const app = createApp(App)
 
 app.config.productionTip = false
 
-// app.filter('accountingFormatter', NumberFilter.accountingFormatter)
-// app.filter('smartFormatter', NumberFilter.smartFormatter)
+
 
 // 统一异常处理
 app.config.errorHandler = function (e, v) {

@@ -45,8 +45,8 @@
 </template>
 
 <script setup>
-import SocketConnection from '@/components/SocketConnection'
-import MessageConfigForm from '@/components/MessageConfigForm'
+import SocketConnection from '@/components/SocketConnection.vue'
+import MessageConfigForm from '@/components/MessageConfigForm.vue'
 import { Share, SwitchButton, Help, Flag } from '@element-plus/icons-vue'
 
 import loginApi from '@/api/loginApi'

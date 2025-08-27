@@ -1,91 +1,85 @@
-import { defineStore } from "pinia";
-const getFromFactory = () => {
-    return {
-        lastUpdateTime: 0,
-        account: {},
-        positions: {},
-        orders: {},
-        transactions: {}
-    }
-}
+import { defineStore } from 'pinia'
+
+const getFromFactory = () => ({
+    lastUpdateTime: 0,
+    account: {},
+    positions: {},
+    orders: {},
+    transactions: {}
+})
+
 export const useAccountStore = defineStore('account', {
     state: () => ({
         curAccountId: '',
-        curInfo: {
-            account: {},
-            positions: {},
-            orders: {},
-            transactions: {}
-        }
+        curInfo: getFromFactory()
     }),
-    actions: {
-        updateCurAccountId(state, id) {
-            state.curAccountId = id
-            if (state[id]) {
-                state.curInfo = state[id]
-            } else {
-                state.curInfo = getFromFactory()
-            }
-        },
-        updateAccount(state, acc) {
-            let gatewayId = acc.gatewayid
-            if (!state[gatewayId]) {
-                state[gatewayId] = getFromFactory()
-            }
-            state[gatewayId].account = acc
-            state[gatewayId].lastUpdateTime = new Date().getTime()
-            if (gatewayId === state.curAccountId) {
-                state.curInfo.account = acc
-            }
-        },
-        updatePosition(state, pos) {
-            let gatewayId = pos.gatewayid
-            if (!state[gatewayId]) {
-                state[gatewayId] = getFromFactory()
-            }
-            state[gatewayId].positions[pos.positionid] = pos
-            if (gatewayId === state.curAccountId) {
-                state.curInfo.positions = Object.assign({}, state[gatewayId].positions)
-            }
-        },
-        updateTrade(state, trade) {
-            let gatewayId = trade.gatewayid
-            if (!state[gatewayId]) {
-                state[gatewayId] = getFromFactory()
-            }
-            state[gatewayId].transactions[trade.tradeid] = trade
-            if (gatewayId === state.curAccountId) {
-                state.curInfo.transactions = Object.assign(
-                    {},
-                    state[gatewayId].transactions
-                )
-            }
-        },
-        updateOrder(state, order) {
-            let gatewayId = order.gatewayid
-            if (!state[gatewayId]) {
-                state[gatewayId] = getFromFactory()
-            }
-            state[gatewayId].orders[order.orderid] = order
-            if (gatewayId === state.curAccountId) {
-                state.curInfo.orders = Object.assign({}, state[gatewayId].orders)
-            }
-        },
-        resetAccountModule(state) {
-            // TODO fix resetAccountModule
-            // Object.assign(state, useAccountStore.state())
-        }
-    },
+
     getters: {
         getAccountById: (state) => (gatewayId) => {
             return state[gatewayId] || {}
         },
         isAccountConnected: (state) => (gatewayId) => {
-            if (!state[gatewayId]) {
-                return false
-            }
+            if (!state[gatewayId]) return false
             return new Date().getTime() - state[gatewayId].lastUpdateTime < 15000
         }
-    }
+    },
 
+    actions: {
+        updateCurAccountId(id) {
+            this.curAccountId = id
+            if (this[id]) {
+                this.curInfo = this[id]
+            } else {
+                this.curInfo = getFromFactory()
+            }
+        },
+
+        updateAccount(acc) {
+            const gatewayId = acc.gatewayid
+            if (!this[gatewayId]) this[gatewayId] = getFromFactory()
+            this[gatewayId].account = acc
+            this[gatewayId].lastUpdateTime = Date.now()
+
+            if (gatewayId === this.curAccountId) {
+                this.curInfo.account = acc
+            }
+        },
+
+        updatePosition(pos) {
+            const gatewayId = pos.gatewayid
+            if (!this[gatewayId]) this[gatewayId] = getFromFactory()
+            this[gatewayId].positions[pos.positionid] = pos
+
+            if (gatewayId === this.curAccountId) {
+                this.curInfo.positions = { ...this[gatewayId].positions }
+            }
+        },
+
+        updateTrade(trade) {
+            const gatewayId = trade.gatewayid
+            if (!this[gatewayId]) this[gatewayId] = getFromFactory()
+            this[gatewayId].transactions[trade.tradeid] = trade
+
+            if (gatewayId === this.curAccountId) {
+                this.curInfo.transactions = { ...this[gatewayId].transactions }
+            }
+        },
+
+        updateOrder(order) {
+            const gatewayId = order.gatewayid
+            if (!this[gatewayId]) this[gatewayId] = getFromFactory()
+            this[gatewayId].orders[order.orderid] = order
+
+            if (gatewayId === this.curAccountId) {
+                this.curInfo.orders = { ...this[gatewayId].orders }
+            }
+        },
+
+        resetAccountModule() {
+            // 重置当前账户信息
+            this.curAccountId = ''
+            this.curInfo = getFromFactory()
+            console.log('重置 account 模块')
+        }
+    }
 })

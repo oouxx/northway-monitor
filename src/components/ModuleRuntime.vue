@@ -143,7 +143,7 @@
               </el-table-column>
               <el-table-column prop="positionDir" label="方向" align="center" width="50px"><template slot-scope="scope">{{
                 { 2: '多', 3: '空' }[scope.row.positiondirection] || '未知'
-              }}</template>
+                  }}</template>
               </el-table-column>
               <el-table-column prop="position" label="数量" align="center" min-width="46px" />
               <el-table-column v-if="!isMobile" prop="openprice" label="成本价" align="center">
@@ -262,13 +262,12 @@ import moduleApi from '@/api/moduleApi'
 import KLineUtils from '@/utils/kline-utils.js'
 import { downloadData } from '@/utils/file-utils.js'
 import { jStat } from 'jstat'
-import { parse } from 'json2csv'
+import { Parser } from '@json2csv/plainjs'
 import MediaListener from '@/utils/media-utils'
 
 import { decodePositionField, decodeTradeField } from '@/lib/xyz/redtorch/pb/core_field_pb'
 import moment from 'moment'
 import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
-
 const makeHoldingSegment = (deal) => {
   return {
     name: 'segment',
@@ -323,6 +322,8 @@ let timer = ref('')
 let isManualUpdate = ref(true)
 let isMobile = ref(false)
 let listener = ref(null)
+
+
 function formatter(val) {
   return typeof val === 'number' ? val.toFixed(0) : val
 }
@@ -410,14 +411,13 @@ function exportData() {
       })
       return timeFrameObj
     })
-
-    const csvData = parse(dataList, { fields })
-    // const csvData = ''
+    const parser = new Parser({ fields: fields })
+    const csvData = parser.parse(dataList)
     downloadData(csvData, `${symbol}_数据.csv`, 'text/csv,charset=UTF-8')
   })
 }
 function exportDealRecord() {
-  const fields = [
+  const dealRecordfields = [
     '合约名称',
     '持仓方向',
     '开仓价',
@@ -439,7 +439,8 @@ function exportDealRecord() {
       交易盈亏: item.dealProfit
     }
   })
-  const csvData = parse(data, { fields })
+  const parser = new Parser({ fields: dealRecordfields })
+  const csvData = parser.parse(data)
   downloadData(csvData, `${props.module.moduleName}_交易历史.csv`, 'text/csv,charset=UTF-8')
 }
 function initChart() {

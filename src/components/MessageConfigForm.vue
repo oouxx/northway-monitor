@@ -50,7 +50,6 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['update:visible'])
-console.log("111")
 let subEvents = ref([])
 let settings = ref({})
 alertingApi.subEvents().then(events => {

@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
 /**
  * 保存合约信息
@@ -9,8 +9,8 @@ const PRODUCT_CLASS_TYPE = {
 }
 
 const convertToInt = (str) => {
-    let alphabic = str.replace(/\d+/, '')
-    let numeric = str.replace(/[^\d]+/, '')
+    const alphabic = str.replace(/\d+/, '')
+    const numeric = str.replace(/[^\d]+/, '')
     let result = ''
     for (let i = 0; i < alphabic.length; i++) {
         result += alphabic.charAt(i).charCodeAt()
@@ -19,50 +19,57 @@ const convertToInt = (str) => {
 }
 
 export const useContractStore = defineStore('contract', {
-
     state: () => ({
         gatewayContractMap: {}
     }),
+
+    getters: {
+        findContractBySymbol: (state) => (gatewayId, unifiedsymbol) => {
+            if (!(gatewayId in state.gatewayContractMap)) {
+                throw new Error('没有找到网关' + gatewayId)
+            }
+            const contractMap = state.gatewayContractMap[gatewayId]
+            for (const type of Object.values(PRODUCT_CLASS_TYPE)) {
+                if (contractMap[type].has(unifiedsymbol)) {
+                    return contractMap[type].get(unifiedsymbol)
+                }
+            }
+            return null
+        },
+
+        findContractsByType: (state) => (gatewayId, type) => {
+            if (!(gatewayId in state.gatewayContractMap)) {
+                throw new Error('没有找到网关' + gatewayId)
+            }
+            const contractMap = state.gatewayContractMap[gatewayId][type]
+            return [...contractMap.values()].sort(
+                (a, b) => convertToInt(a.symbol) - convertToInt(b.symbol)
+            )
+        }
+    },
+
     actions: {
-        updateContract(state, contract) {
-            let gatewayId = contract.gatewayid
-            if (!state.gatewayContractMap[gatewayId]) {
-                state.gatewayContractMap[gatewayId] = {
+        updateContract(contract) {
+            const gatewayId = contract.gatewayid
+            if (!this.gatewayContractMap[gatewayId]) {
+                this.gatewayContractMap[gatewayId] = {
                     FUTURES: new Map(),
                     OPTION: new Map()
                 }
             }
+
             try {
-                if (PRODUCT_CLASS_TYPE[contract.productclass]) {
-                    state.gatewayContractMap[gatewayId][
-                        PRODUCT_CLASS_TYPE[contract.productclass]
-                    ].set(contract.unifiedsymbol, contract)
+                const type = PRODUCT_CLASS_TYPE[contract.productclass]
+                if (type) {
+                    this.gatewayContractMap[gatewayId][type].set(
+                        contract.unifiedsymbol,
+                        contract
+                    )
                 }
             } catch (e) {
                 console.error(e)
                 console.warn(contract.productclass)
             }
         }
-    },
-    getters: {
-        findContractBySymbol: (state) => (gatewayId, unifiedsymbol) => {
-            if (!(gatewayId in state.gatewayContractMap)) {
-                throw new Error('没有找到网关' + gatewayId)
-            }
-
-            let contractMap = state.gatewayContractMap[gatewayId]
-            return contractMap.get(unifiedsymbol)
-        },
-        findContractsByType: (state) => (gatewayId, type) => {
-            if (!(gatewayId in state.gatewayContractMap)) {
-                throw new Error('没有找到网关' + gatewayId)
-            }
-            let contractMap = state.gatewayContractMap[gatewayId][type]
-            return [...contractMap]
-                .map((i) => i[1])
-                .sort((a, b) => convertToInt(a.symbol) - convertToInt(b.symbol))
-        }
     }
-
-}
-)
+})
