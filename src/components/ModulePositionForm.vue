@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="`持仓调整`" v-if="visible" :close-on-click-modal="false" :show-close="false" width="200px"
+  <el-dialog :title="`持仓调整`" :model-value="visible" :close-on-click-modal="false" :show-close="false" width="200px"
     append-to-body>
     <div class="warning-text pb-20">
       <i class="el-icon-warning" /> 该操作仅用于手工同步模组持仓状态，请谨慎使用<br />

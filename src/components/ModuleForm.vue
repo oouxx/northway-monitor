@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="readOnly ? '查看' : isUpdateMode ? '修改' : '新增'" v-if="visible" class="module-dialog"
+  <el-dialog :title="readOnly ? '查看' : isUpdateMode ? '修改' : '新增'" :model-value="visible" class="module-dialog"
     v-loading="loading" :close-on-click-modal="readOnly" element-loading-background="rgba(0, 0, 0, 0.3)"
     :width="`${isMobile ? '80%' : '540px'}`" @close="close">
     <!-- TODO fix ContractFinder component -->
@@ -9,7 +9,6 @@
         <el-menu :default-active="activeIndex" @select="handleSelect">
           <el-menu-item index="1">
             <i class="el-icon-setting"></i>
-
             <span v-if="!isMobile" slot="title">基础信息</span>
           </el-menu-item>
           <el-menu-item index="2">
@@ -88,7 +87,9 @@
           </div>
           <div v-show="activeIndex === '2'">
             <el-form-item>
-              <el-checkbox slot="label" id="showDemoStrategy" v-model="showDemoStrategy">显示示例策略</el-checkbox>
+              <template v-slot:label>
+                <el-checkbox id="showDemoStrategy" v-model="showDemoStrategy">显示示例策略</el-checkbox>
+              </template>
             </el-form-item>
             <el-form-item label="绑定策略">
               <el-select v-model="form.strategySetting" placeholder="请选择" :disabled="readOnly || isUpdateMode"

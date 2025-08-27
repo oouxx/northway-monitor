@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="300px" title="模拟网关出入金" v-if="visible" append-to-body @close="onClose">
+  <el-dialog width="300px" title="模拟网关出入金" :model-value="visible" append-to-body @close="onClose">
     <el-row>
       <el-col :span="24">
         <span class="row-lh">账户ID：{{ simGatewayId }}</span>

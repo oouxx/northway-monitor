@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="盈亏曲线" v-if="visible" width="80%" append-to-body top="5vh" :before-close="close">
+  <el-dialog title="盈亏曲线" :model-value="visible" width="80%" append-to-body top="5vh" :before-close="close">
     <div class="perf-chart-wrapper">
       <module-performance ref="chartContainer" :moduleInitBalance="moduleInitBalance"
         :moduleDealRecords="moduleDealRecords" :largeView="true" />

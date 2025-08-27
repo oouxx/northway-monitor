@@ -1,18 +1,26 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const useModuleInfoStore = defineStore('moduleInfo', {
-    state: () => ({
-        list: []
-    }),
+export const useModuleInfoStore = defineStore('moduleInfo', () => {
+    // ---------- state ----------
+    const list = ref([])
 
-    getters: {
-        moduleList: (state) => state.list,
-        module: (state) => (moduleName) => state.list.find(item => item.moduleName === moduleName)
-    },
+    // ---------- getters ----------
+    const moduleList = () => list.value
+    const module = (moduleName) => list.value.find(item => item.moduleName === moduleName)
 
-    actions: {
-        updateList(val) {
-            this.list = val
-        }
+    // ---------- actions ----------
+    function updateList(val) {
+        list.value = val
+    }
+
+    return {
+        // state
+        list,
+        // getters
+        moduleList,
+        module,
+        // actions
+        updateList
     }
 })

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { reactive } from 'vue'
 
 /**
  * 保存合约信息
@@ -13,63 +14,67 @@ const convertToInt = (str) => {
     const numeric = str.replace(/[^\d]+/, '')
     let result = ''
     for (let i = 0; i < alphabic.length; i++) {
-        result += alphabic.charAt(i).charCodeAt()
+        result += alphabic.charCodeAt()
     }
     return parseInt(result + numeric)
 }
 
-export const useContractStore = defineStore('contract', {
-    state: () => ({
-        gatewayContractMap: {}
-    }),
+export const useContractStore = defineStore('contract', () => {
+    // ---------- state ----------
+    const gatewayContractMap = reactive({})
 
-    getters: {
-        findContractBySymbol: (state) => (gatewayId, unifiedsymbol) => {
-            if (!(gatewayId in state.gatewayContractMap)) {
-                throw new Error('没有找到网关' + gatewayId)
-            }
-            const contractMap = state.gatewayContractMap[gatewayId]
-            for (const type of Object.values(PRODUCT_CLASS_TYPE)) {
-                if (contractMap[type].has(unifiedsymbol)) {
-                    return contractMap[type].get(unifiedsymbol)
-                }
-            }
-            return null
-        },
-
-        findContractsByType: (state) => (gatewayId, type) => {
-            if (!(gatewayId in state.gatewayContractMap)) {
-                throw new Error('没有找到网关' + gatewayId)
-            }
-            const contractMap = state.gatewayContractMap[gatewayId][type]
-            return [...contractMap.values()].sort(
-                (a, b) => convertToInt(a.symbol) - convertToInt(b.symbol)
-            )
+    // ---------- getters ----------
+    const findContractBySymbol = (gatewayId, unifiedsymbol) => {
+        if (!(gatewayId in gatewayContractMap)) {
+            throw new Error('没有找到网关 ' + gatewayId)
         }
-    },
-
-    actions: {
-        updateContract(contract) {
-            const gatewayId = contract.gatewayid
-            if (!this.gatewayContractMap[gatewayId]) {
-                this.gatewayContractMap[gatewayId] = {
-                    FUTURES: new Map(),
-                    OPTION: new Map()
-                }
-            }
-
-            try {
-                const type = PRODUCT_CLASS_TYPE[contract.productclass]
-                if (type) {
-                    this.gatewayContractMap[gatewayId][type].set(
-                        contract.unifiedsymbol,
-                        contract
-                    )
-                }
-            } catch (e) {
-                console.error(e)
-                console.warn(contract.productclass)
+        const contractMap = gatewayContractMap[gatewayId]
+        for (const type of Object.values(PRODUCT_CLASS_TYPE)) {
+            if (contractMap[type].has(unifiedsymbol)) {
+                return contractMap[type].get(unifiedsymbol)
             }
         }
+        return null
+    }
+
+    const findContractsByType = (gatewayId, type) => {
+        if (!(gatewayId in gatewayContractMap)) {
+            throw new Error('没有找到网关 ' + gatewayId)
+        }
+        const contractMap = gatewayContractMap[gatewayId][type]
+        return [...contractMap.values()].sort(
+            (a, b) => convertToInt(a.symbol) - convertToInt(b.symbol)
+        )
+    }
+
+    // ---------- actions ----------
+    function updateContract(contract) {
+        const gatewayId = contract.gatewayid
+        if (!gatewayContractMap[gatewayId]) {
+            gatewayContractMap[gatewayId] = {
+                FUTURES: new Map(),
+                OPTION: new Map()
+            }
+        }
+
+        try {
+            const type = PRODUCT_CLASS_TYPE[contract.productclass]
+            if (type) {
+                gatewayContractMap[gatewayId][type].set(contract.unifiedsymbol, contract)
+            }
+        } catch (e) {
+            console.error(e)
+            console.warn(contract.productclass)
+        }
+    }
+
+    return {
+        // state
+        gatewayContractMap,
+        // getters
+        findContractBySymbol,
+        findContractsByType,
+        // actions
+        updateContract
     }
 })

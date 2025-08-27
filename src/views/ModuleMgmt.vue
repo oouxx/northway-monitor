@@ -60,7 +60,9 @@
           }}</el-button>
           <el-popconfirm v-if="!item.runtime || !item.runtime.enabled" class="ml-10" title="确定移除吗？"
             @confirm="handleDelete(i, item)">
-            <el-button slot="reference" size="small" type="danger"> 删除 </el-button>
+            <template v-slot:reference>
+              <el-button size="small" type="danger"> 删除 </el-button>
+            </template>
           </el-popconfirm>
         </div>
       </el-card>

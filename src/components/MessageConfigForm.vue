@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="消息通知设置" v-if="visible" :close-on-click-modal="false" :show-close="false" width="200px">
+  <el-dialog title="消息通知设置" :model-value="visible" :close-on-click-modal="false" :show-close="false" width="200px">
     <el-form label-width="100px">
       <el-form-item label="订阅事件列表">
         <el-select v-model="subEvents" multiple placeholder="可多选">
@@ -42,7 +42,7 @@
 <script setup>
 import alertingApi from '@/api/alertingApi'
 import { ElMessage } from 'element-plus'
-import { ref, reactive, onMounted, watch, computed, defineProps, defineEmits } from 'vue'
+import { ref, reactive, onMounted, watch, computed } from 'vue'
 const props = defineProps({
   visible: {
     type: Boolean,

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog id="gatewayForm" :title="readOnly ? '查看' : isUpdateMode ? '修改' : '新增'" v-if="visible" width="768px"
+  <el-dialog id="gatewayForm" :title="readOnly ? '查看' : isUpdateMode ? '修改' : '新增'" :model-value="visible" width="768px"
     :close-on-click-modal="false" :show-close="false">
     <GatewaySettingsForm v-if="form.channelType !== 'PLAYBACK'" v-model:visible="gatewaySettingsFormVisible"
       :channelType="form.channelType" :gatewaySettingsMetaInfo="gatewaySettingsMetaInfo"

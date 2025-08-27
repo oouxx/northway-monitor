@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="520px" title="历史回放网关配置" v-if="visible" append-to-body :close-on-click-modal="false"
+  <el-dialog width="520px" title="历史回放网关配置" :model-value="visible" append-to-body :close-on-click-modal="false"
     :show-close="false" destroy-on-close>
     <el-form ref="playbackSettings" :model="playbackSettings" label-width="100px" width="200px" :rules="formRules">
       <el-form-item label="预热起始日">
@@ -40,7 +40,7 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import moment from 'moment'
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 const props = defineProps({
   visible: {
     type: Boolean,

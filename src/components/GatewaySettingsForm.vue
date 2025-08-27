@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :title="`${channelType}网关配置`" width="300px" v-if="visible" append-to-body :close-on-click-modal="false"
-    :show-close="false" destroy-on-close>
+  <el-dialog :title="`${channelType}网关配置`" width="300px" :model-value="visible" append-to-body
+    :close-on-click-modal="false" :show-close="false" destroy-on-close>
     <el-form :model="gatewaySettings" label-width="100px" width="200px">
       <el-form-item v-for="(item, i) in gatewaySettingsMetaInfo" :label="item.label" :key="i" :required="item.required">
         <el-input v-if="['TEXT', 'PASSWORD', 'NUMBER'].indexOf(item.type) > -1" v-model="gatewaySettings[item.name]"
@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 const emit = defineEmits(['update:visible', 'onSave'])
 const props = defineProps({
   visible: {

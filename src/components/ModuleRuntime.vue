@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="模组运行状态" v-if="visible" fullscreen class="flex-col" @close="close">
+  <el-dialog title="模组运行状态" :model-value="visible" fullscreen class="flex-col" @close="close">
     <ModulePositionForm v-if="module.usage !== 'PLAYBACK'" v-model:visible="positionFormVisible"
       :contractOptions="moduleBindedContracts" :moduleName="module.moduleName" @save="onSave" />
     <ModulePerformancePopup v-model:visible="performanceVisible" :moduleInitBalance="moduleInfo.initBalance"
@@ -8,12 +8,12 @@
       <div class="side-panel">
         <div class="side-panel_content">
           <el-descriptions class="margin-top panel-header" :column="`${isMobile ? 2 : 3}`">
-            <template slot="title">
+            <template v-slot:title>
               模组用途
               <el-tag class="ml-10" :type="{ PLAYBACK: 'info', UAT: 'warning', PROD: '' }[module.usage]"
                 effect="dark">{{ { PLAYBACK: '回测', UAT: '模拟盘', PROD: '实盘' }[module.usage] }}</el-tag>
             </template>
-            <template slot="extra">
+            <template v-slot:extra>
               <el-switch class="ml-10" v-model="isManualUpdate" inactive-text="自动刷新" active-color="#D8DBE1"
                 inactive-color="#f7c139">
               </el-switch>
@@ -97,7 +97,7 @@
             </el-tab-pane>
             <el-tab-pane name="accountInfo" label="账户信息">
               <el-descriptions v-for="(item, i) in accountInfo" :key="i" column="2">
-                <template slot="title">
+                <template v-slot:title>
                   {{ item.name }}
                 </template>
                 <el-descriptions-item label="账户余额">
@@ -115,14 +115,18 @@
                     <el-popover v-if="(item.value instanceof Array)" placement="right" trigger="click">
                       <el-table :data="item.value" max-height="300px">
                         <el-table-column width="100" property="name" label="描述">
-                          <template slot-scope="scope">
+                          <template v-slot:default="scope">
                             {{ scope.row.name || scope.$index + 1 }}
                           </template>
                         </el-table-column>
                         <el-table-column width="100" property="value" label="数值"></el-table-column>
                       </el-table>
-                      <el-button slot="reference" :disabled="!item.value.length">{{ item.value.length ? '明细' :
-                        '无数据' }}</el-button>
+                      <template v-slot:reference>
+                        <el-button :disabled="!item.value.length">{{ item.value.length ? '明细' :
+                          '无数据' }}
+                        </el-button>
+                      </template>
+
                     </el-popover>
                     <span v-else>{{ item.value }}</span>
                   </el-descriptions-item>
@@ -139,25 +143,27 @@
           <div class="table-wrapper">
             <el-table id="modulePositionTbl" v-show="moduleTab === 'holding'" :data="holdingPositions" height="100%">
               <el-table-column prop="unifiedSymbol" label="合约" align="center" width="100px">
-                <template slot-scope="scope">{{ scope.row.contract.name }}</template>
+                <template v-slot:default="scope">{{ scope.row.contract.name }}</template>
               </el-table-column>
-              <el-table-column prop="positionDir" label="方向" align="center" width="50px"><template slot-scope="scope">{{
-                { 2: '多', 3: '空' }[scope.row.positiondirection] || '未知'
-                  }}</template>
+              <el-table-column prop="positionDir" label="方向" align="center" width="50px">
+                <template v-slot:default="scope">{{
+                  { 2: '多', 3: '空' }[scope.row.positiondirection] || '未知'
+                }}
+                </template>
               </el-table-column>
               <el-table-column prop="position" label="数量" align="center" min-width="46px" />
               <el-table-column v-if="!isMobile" prop="openprice" label="成本价" align="center">
-                <template slot-scope="scope">
+                <template v-slot:default="scope">
                   {{ scope.row.openprice.toFixed(scope.row.contract.priceprecision) }}
                 </template>
               </el-table-column>
               <el-table-column v-if="!isMobile" prop="lastprice" label="现价" align="center">
-                <template slot-scope="scope">
+                <template v-slot:default="scope">
                   {{ (scope.row.lastprice).toFixed(scope.row.contract.priceprecision) }}
                 </template>
               </el-table-column>
               <el-table-column prop="positionprofit" label="持仓盈亏" align="center">
-                <template slot-scope="scope">
+                <template v-slot:default="scope">
                   {{ formatter(scope.row.positionprofit) }}
                 </template>
               </el-table-column>
@@ -175,17 +181,17 @@
               <el-table-column prop="openPrice" label="开仓价" align="center" />
               <el-table-column prop="closePrice" label="平仓价" align="center" />
               <el-table-column label="平仓盈亏" align="center" width="70px">
-                <template slot-scope="scope">
+                <template v-slot:default="scope">
                   {{ formatter(scope.row.dealProfit) }}
                 </template>
               </el-table-column>
               <el-table-column label="开仓时间" align="center" width="132px">
-                <template slot-scope="scope">
+                <template v-slot:default="scope">
                   {{ `${scope.row.openTrade.tradedate} ${scope.row.openTrade.tradetime}` }}
                 </template>
               </el-table-column>
               <el-table-column label="平仓时间" align="center" width="132px">
-                <template slot-scope="scope">
+                <template v-slot:default="scope">
                   {{ `${scope.row.closeTrade.tradedate} ${scope.row.closeTrade.tradetime}` }}
                 </template>
               </el-table-column>
@@ -237,7 +243,9 @@
                 <el-button style="float: right" type="warning" @click.native="clearIndicators">清空指标</el-button>
               </el-form-item>
             </el-form>
-            <el-button class="ml-10 mr-10" slot="reference" icon="el-icon-setting" title="指标样式设置"></el-button>
+            <template v-slot:reference>
+              <el-button class="ml-10 mr-10" icon="el-icon-setting" title="指标样式设置"></el-button>
+            </template>
           </el-popover>
           <el-button :icon="`${holdingVisibleOnChart ? 'el-icon-data-board' : 'el-icon-data-line'}`"
             :title="`${holdingVisibleOnChart ? '隐藏持仓线' : '显示持仓线'}`"
@@ -628,7 +636,6 @@ let moduleBindedContracts = computed(() => {
 })
 let holdingProfit = computed(() => {
   return holdingPositions.value.map((item) => item.positionprofit).reduce((a, b) => a + b, 0)
-
 })
 let totalProfit = computed(() => {
   if (!moduleRuntime.value) return 0

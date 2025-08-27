@@ -13,15 +13,20 @@
       <div class="ns-tools">
         <el-popover class="mr-10" placement="left" trigger="click">
           <img src="../assets/wx.jpg" width="400px" />
-          <el-button slot="reference" title="加入社群" circle>
-            <Flag />
-          </el-button>
+          <template v-slot:reference>
+            <el-button title="加入社群" circle>
+              <Flag />
+            </el-button>
+          </template>
         </el-popover>
         <el-popover class="mr-10" placement="left" trigger="click">
           <img src="../assets/知识星球.jpg" width="400px" />
-          <el-button slot="reference" title="知识星球提问" circle>
-            <Help />
-          </el-button>
+          <template v-slot:reference>
+            <el-button title="知识星球提问" circle>
+              <Help />
+            </el-button>
+          </template>
+
         </el-popover>
         <el-button @click="mailSettingFormVisible = true" title="邮件通知设置" circle>
           <el-icon>
@@ -47,7 +52,7 @@
 <script setup>
 import SocketConnection from '@/components/SocketConnection.vue'
 import MessageConfigForm from '@/components/MessageConfigForm.vue'
-import { Share, SwitchButton, Help, Flag } from '@element-plus/icons-vue'
+import { Share, SwitchButton, Help, Flag, QuestionFilled } from '@element-plus/icons-vue'
 
 import loginApi from '@/api/loginApi'
 import MediaListener from '@/utils/media-utils'
