@@ -9,19 +9,27 @@
         <el-menu :default-active="activeIndex" @select="handleSelect">
           <el-menu-item index="1">
             <i class="el-icon-setting"></i>
-            <span v-if="!isMobile" slot="title">基础信息</span>
+            <template v-slot:title>
+              <span v-if="!isMobile">基础信息</span>
+            </template>
           </el-menu-item>
           <el-menu-item index="2">
             <i class="el-icon-s-opportunity"></i>
-            <span v-if="!isMobile" slot="title">交易策略</span>
+            <template v-slot:title>
+              <span v-if="!isMobile">交易策略</span>
+            </template>
           </el-menu-item>
           <el-menu-item index="3">
             <i class="el-icon-s-custom"></i>
-            <span v-if="!isMobile" slot="title">账户绑定</span>
+            <template v-slot:title>
+              <span v-if="!isMobile">账户绑定</span>
+            </template>
           </el-menu-item>
           <el-menu-item index="4">
             <i class="el-icon-document-copy"></i>
-            <span v-if="!isMobile" slot="title">已关联合约</span>
+            <template v-slot:title>
+              <span v-if="!isMobile">已关联合约</span>
+            </template>
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -147,9 +155,11 @@
       <div class="dialog-footer">
         <el-popconfirm v-if="!readOnly && isUpdateMode" class="mr-10" title="确定重置吗？"
           @confirm="saveSettingAndClose(true)">
-          <el-button id="resetModuleSettings" slot="reference" size="small" type="warning" title="模组状态将重置为初始状态">
-            重置模组
-          </el-button>
+          <template v-slot:reference>
+            <el-button id="resetModuleSettings" size="small" type="warning" title="模组状态将重置为初始状态">
+              重置模组
+            </el-button>
+          </template>
         </el-popconfirm>
         <el-button v-if="!!module" @click="copyModule">复 制</el-button>
         <el-button id="closeModuleSettings" @click="close">取 消</el-button>
@@ -190,6 +200,7 @@ const props = defineProps({
     default: null
   }
 })
+const emit = defineEmits(['update:visible', 'onSave'])
 let contractFinderVisible = ref(false)
 let loading = ref(false)
 let showDemoStrategy = ref(false)
@@ -227,6 +238,7 @@ let tradeStrategyOptions = computed(() => {
   return tradeStrategyOptionsSource.value.filter((item) => !/示例/.test(item.componentMeta.name))
 })
 let jointBindedContracts = computed(() => {
+  console.log('111111', form.moduleAccountSettingsDescription)
   return form.moduleAccountSettingsDescription.map(item => item.bindedContracts).reduce((jointList, list) => jointList.concat(list), [])
 })
 let listener = new MediaListener(() => {
@@ -292,8 +304,8 @@ async function saveSetting(reset) {
   } finally {
     loading.value = false
   }
-  // TODO fix emit
-  this.$emit('onSave', obj)
+
+  emit('onSave', obj)
 }
 async function saveSettingAndClose(reset) {
   saveSetting(reset)
@@ -304,14 +316,13 @@ function saveSettingAndMore() {
   saveSetting(false).catch((e) => ElMessage.error(e.message))
 }
 function close() {
-  // TODO fix emit
-  this.$emit('update:visible', false)
+  emit('update:visible', false)
   activeIndex.value = '1'
 }
 function copyModule() {
   const protoModule = Object.assign({}, props.module)
-  // TODO fix emit
-  this.$emit('copyModule')
+
+  emit('copyModule')
   form = protoModule
   form.moduleName = ''
 }

@@ -275,7 +275,7 @@ import MediaListener from '@/utils/media-utils'
 
 import { decodePositionField, decodeTradeField } from '@/lib/xyz/redtorch/pb/core_field_pb'
 import moment from 'moment'
-import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, watch, computed, onMounted, onUnmounted, nextTick } from 'vue'
 const makeHoldingSegment = (deal) => {
   return {
     name: 'segment',
@@ -307,6 +307,7 @@ const props = defineProps({
     default: () => { }
   }
 })
+const dealTbl = ref(null)
 
 let positionFormVisible = ref(false)
 let performanceVisible = ref(false)
@@ -337,12 +338,12 @@ function formatter(val) {
 }
 const emit = defineEmits(['onSave', 'update:visible'])
 
-watch(() => props.visible, () => {
+watch(() => props.visible, (val) => {
   if (!localStorage.getItem(`autoUpdate_${props.module.moduleName}`)) {
     localStorage.setItem(`autoUpdate_${props.module.moduleName}`, true)
   }
   if (val) {
-    isMobile.value = this.listener.isMobile()
+    isMobile.value = listener.value.isMobile()
     moduleRuntime.value = props.moduleRuntimeSrc
     if (isMobile.value) {
       loadDealRecord()
@@ -369,7 +370,7 @@ function loadRuntime() {
   })
 }
 function loadDealRecord() {
-  moduleApi.getModuleDealRecords(this.module.moduleName).then((result) => {
+  moduleApi.getModuleDealRecords(props.module.moduleName).then((result) => {
     dealRecords.value = result.map((item) => {
       item.openTrade = decodeTradeField(item.openTrade)
       item.closeTrade = decodeTradeField(item.closeTrade)
@@ -382,9 +383,15 @@ function loadDealRecord() {
     })
 
     nextTick(() => {
-      let table = this.$refs.dealTbl
+      let table = dealTbl.value
       if (table) {
-        table.bodyWrapper.scrollTop = table.bodyWrapper.scrollHeight
+        // TODO 测试是否滚动底部
+        // 获取滚动容器
+        const scrollWrap = table.$el.querySelector('.el-scrollbar__wrap');
+        if (scrollWrap) {
+          // 设置滚动位置到底部:cite[5]:cite[6]:cite[8]
+          scrollWrap.scrollTop = scrollWrap.scrollHeight;
+        }
       }
     })
   })
@@ -598,8 +605,7 @@ watch(() => 'dealRecords.length', () => {
 watch(() => moduleTab.value, (val) => {
   if (val === 'dealRecord') {
     setTimeout(() => {
-      // TODO $refs
-      let table = this.$refs.dealTbl
+      let table = dealTbl.value
       if (table) {
         table.bodyWrapper.scrollTop = table.bodyWrapper.scrollHeight
       }
@@ -632,9 +638,11 @@ let moduleInfo = computed(() => { return moduleRuntime.value.moduleAccountRuntim
 let accountInfo = computed(() => { return moduleRuntime.value.accountRuntimes || [] })
 let moduleBindedContracts = computed(() => {
   if (!props.module.moduleAccountSettingsDescription) return []
+  console.log('22222', props.module.moduleAccountSettingsDescription)
   return props.module.moduleAccountSettingsDescription.reduce((contracts, mad) => contracts.concat(mad.bindedContracts), [])
 })
 let holdingProfit = computed(() => {
+  console.log('33333', holdingPositions.value)
   return holdingPositions.value.map((item) => item.positionprofit).reduce((a, b) => a + b, 0)
 })
 let totalProfit = computed(() => {

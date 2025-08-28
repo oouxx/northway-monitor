@@ -23,7 +23,7 @@ const props = defineProps({
 let chartId = ref('perf-chart_' + Math.random())
 let kLineChart = ref(null)
 onMounted(() => {
-  const kLineChartLocal = init(this.chartId)
+  const kLineChartLocal = init(chartId.value)
   kLineChart.value = kLineChartLocal
   kLineChart.value.setStyleOptions(KLineUtils.getThemeOptions('dark'))
   kLineChart.value.setStyleOptions(KLineUtils.getPerformanceChartOptions())

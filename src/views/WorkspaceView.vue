@@ -56,7 +56,7 @@ import { Share, SwitchButton, Help, Flag, QuestionFilled } from '@element-plus/i
 
 import loginApi from '@/api/loginApi'
 import MediaListener from '@/utils/media-utils'
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, provide } from 'vue'
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { ElMessage } from 'element-plus'
 const route = useRoute()
@@ -130,6 +130,7 @@ onUnmounted(() => {
   nextTick(() => location.reload())
 })
 
+provide('handleSelect', handleSelect)
 </script>
 
 <style scoped>

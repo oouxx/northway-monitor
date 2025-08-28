@@ -67,7 +67,7 @@
         </div>
       </el-card>
     </div>
-    <el-table v-else height="100%" :data="useModuleInfo.moduleList">
+    <el-table v-else height="100%" :data="useModuleInfo.moduleList()">
       <el-table-column type="index" width="42px" />
       <el-table-column label="模组名称" prop="moduleName" sortable align="center" width="180px" />
       <el-table-column label="模组类型" prop="type" sortable align="center" width="100px">
@@ -178,7 +178,7 @@
           <el-button v-else size="small" @click="handleRow(scope.$index, scope.row)">修改</el-button>
           <el-popconfirm v-if="!scope.row.runtime || !scope.row.runtime.enabled" class="ml-10" title="确定移除吗？"
             @confirm="handleDelete(scope.$index, scope.row)">
-            <template v-slot="reference">
+            <template v-slot:reference>
               <el-button size="small" type="danger"> 删除 </el-button>
             </template>
           </el-popconfirm>
@@ -194,7 +194,7 @@ import ModuleRuntime from '@/components/ModuleRuntime'
 import moduleApi from '@/api/moduleApi'
 import MediaListener from '@/utils/media-utils'
 import { useModuleInfoStore } from '@/store/modules/moduleInfo'
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted, inject } from 'vue'
 import { ElLoading } from 'element-plus'
 
 let moduleFormVisible = ref(false)
@@ -212,6 +212,7 @@ let listener = new MediaListener(() => { })
 let filterModuleList = ref([])
 
 let useModuleInfo = useModuleInfoStore()
+const handleSelect = inject('handleSelect')
 
 if (!useModuleInfo.moduleList.length) {
   moduleApi.getAllModules().then(modules => {
@@ -349,11 +350,12 @@ async function toggle(index, row) {
   clearTimeout(delayTimer.value)
   row.runtime.enabled = !row.runtime.enabled
   await moduleApi.toggleModuleState(row.moduleName)
-  delayTimer.value = setTimeout(this.autoRefreshList, 1000)
+  delayTimer.value = setTimeout(autoRefreshList, 1000)
 }
 function tailModuleLog(row) {
-  this.$parent.handleSelect('9', { module: row.moduleName })
+  handleSelect('9', { module: row.moduleName })
 }
+
 function sortAccount(a, b) {
   const ra = a.moduleAccountSettingsDescription.map((item) => item.accountGatewayId).join('；')
   const rb = b.moduleAccountSettingsDescription.map((item) => item.accountGatewayId).join('；')
