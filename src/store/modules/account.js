@@ -37,7 +37,7 @@ export const useAccountStore = defineStore('account', () => {
     }
 
     function updateAccount(acc) {
-        const gatewayId = acc.gatewayid
+        const gatewayId = acc.gatewayId
         if (!accounts[gatewayId]) accounts[gatewayId] = getFromFactory()
 
         accounts[gatewayId].account = acc

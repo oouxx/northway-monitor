@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "xyz/redtorch/pb/core_enum.proto";
+import "core_enum.proto";
 
 package xyz.redtorch.pb;
 

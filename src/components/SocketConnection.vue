@@ -3,27 +3,7 @@
 </template>
 
 <script setup>
-// import {
-
-//   TickField,
-//   BarField,
-//   ContractField,
-//   AccountField,
-//   PositionField,
-//   TradeField,
-//   OrderField,
-//   NoticeField
-// } from '@/lib/xyz/redtorch/pb/core_field_pb'
-import {
-  decodeAccountField,
-  decodeTickField,
-  decodeBarField,
-  decodeContractField,
-  decodePositionField,
-  decodeTradeField,
-  decodeOrderField,
-  decodeNoticeField
-} from '@/lib/xyz/redtorch/pb/core_field_pb'
+import protoUtils from '@/utils/proto2js/index.js'
 import io from 'socket.io-client'
 import { ref, watch, onMounted, reactive, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
@@ -40,6 +20,7 @@ const TYPE = {
   2: 'warning',
   3: 'error'
 }
+
 let socket = ref(null)
 let wsHost = ref('')
 let wsPort = ref(51688)
@@ -74,43 +55,43 @@ function initSocket() {
     rejectUnauthorized: false
   })
   socket.on('TICK', (data) => {
-    nextTick(() => {
-      let tick = decodeTickField(data)
+    nextTick(async () => {
+      let tick = await protoUtils.decodeProtoField(data, 'TickField')
       useMarketCurrentData.updateTick(tick)
     })
   })
   socket.on('BAR', (data) => {
-    nextTick(() => {
-      let bar = decodeBarField(data)
+    nextTick(async () => {
+      let bar = await protoUtils.decodeProtoField(data, 'BarField')
       useMarketCurrentData.updateBar(bar)
     })
   })
   socket.on('ACCOUNT', (data) => {
-    nextTick(() => {
-      let account = decodeAccountField(data)
+    nextTick(async () => {
+      let account = await protoUtils.decodeProtoField(data, 'AccountField')
       useAccount.updateAccount(account)
     })
   })
   socket.on('POSITION', (data) => {
-    nextTick(() => {
-      let position = decodePositionField(data)
+    nextTick(async () => {
+      let position = await protoUtils.decodeProtoField(data, 'PositionField')
       useAccount.updatePosition(position)
     })
   })
-  socket.on('TRADE', (data) => {
-    let trade = decodeTradeField(data)
+  socket.on('TRADE', async (data) => {
+    let trade = await protoUtils.decodeProtoField(data, 'TradeField')
     useAccount.updateTrade(trade)
   })
-  socket.on('ORDER', (data) => {
-    let order = decodeOrderField(data)
+  socket.on('ORDER', async (data) => {
+    let order = await protoUtils.decodeProtoField(data, 'OrderField')
     useAccount.updateOrder(order)
   })
-  socket.on('CONTRACT', (data) => {
-    let contract = decodeContractField(data)
+  socket.on('CONTRACT', async (data) => {
+    let contract = await protoUtils.decodeProtoField(data, 'ContractField')
     useContract.updateContract(contract)
   })
-  socket.on('NOTICE', (data) => {
-    let notice = decodeNoticeField(data)
+  socket.on('NOTICE', async (data) => {
+    let notice = await protoUtils.decodeProtoField(data, 'NoticeField')
     ElMessage[TYPE[notice.status]](notice.content)
   })
   socket.on('error', (e) => {

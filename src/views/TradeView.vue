@@ -91,6 +91,7 @@ import { useContractStore, useAccountStore, useMarketCurrentDataStore } from '@/
 import { ref, reactive, watch, onMounted, computed, onUnmounted } from 'vue'
 import numberFilter from '../filter/number-filter'
 import { ElMessage } from 'element-plus'
+import { ElSubMenu } from 'element-plus'
 let accountCheckTimer
 let accountingFormatter = numberFilter.accountingFormatter
 
@@ -178,7 +179,7 @@ function onPositionChosen(pos) {
   contract.value = contractLocal
   contractApi.getSubscribedContracts(chosenAccount.value.gatewayId, pos.contract.unifiedsymbol).then(result => {
     if (!result.length) {
-      this.$message.warning(`注意，合约 [${pos.contract.name}] 未被订阅，将获取不到行情数据`)
+      ElMessage.warning(`注意，合约 [${pos.contract.name}] 未被订阅，将获取不到行情数据`)
     }
   })
   currentPosition.value = pos
@@ -289,7 +290,13 @@ let bkPrice = computed(() => {
     ANY_PRICE: useMarketCurrentData.curTick.upperlimit || 0,
     LIMIT_PRICE: limitPrice.value
   }[dealPriceType.value]
-  return typeof price === 'number' ? price.toFixed(precision.value) : price
+
+  // 如果是数字，做精度处理
+  if (typeof price === "number" && !isNaN(price)) {
+    return Number(price.toFixed(precision.value));
+  }
+
+  return price ?? 0; // 保证不会返回 undefined
 })
 let skPrice = computed(() => {
   const price = {
@@ -298,7 +305,12 @@ let skPrice = computed(() => {
     ANY_PRICE: useMarketCurrentData.curTick.lowerlimit || 0,
     LIMIT_PRICE: limitPrice.value
   }[dealPriceType.value]
-  return typeof price === 'number' ? price.toFixed(precision.value) : price
+  // 如果是数字，做精度处理
+  if (typeof price === "number" && !isNaN(price)) {
+    return Number(price.toFixed(precision.value));
+  }
+
+  return price ?? 0; // 保证不会返回 undefined
 })
 let closePrice = computed(() => {
   if (currentPosition.value && currentPosition.value.positiondirection === 2) {

@@ -31,7 +31,7 @@ import volumePure from '@/lib/indicator/volume-pure'
 import gatewayDataApi from '@/api/gatewayDataApi'
 import { useMarketCurrentDataStore } from '@/store'
 
-import { decodeBarField } from '@/lib/xyz/redtorch/pb/core_field_pb'
+import protoUtils from '@/utils/proto2js/index.js'
 import KLineUtils from '@/utils/kline-utils.js'
 import { ref, reactive, computed, watch, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -85,7 +85,7 @@ async function loadBars(timestamp, loadMore) {
       !loadMore
     )
     return barDataList
-      .map((data) => decodeBarField(data))
+      .map(async (data) => await protoUtils.decodeProtoField(data, 'BarField'))
       .map((bar) => KLineUtils.createFromBar(bar))
   } catch (e) {
     ElMessage.error(e.message)
@@ -152,7 +152,7 @@ watch(() => marketCurrentDataStore.curUnifiedSymbol, (val) => {
   if (val) {
     kLineChart.value.setPriceVolumePrecision(props.precision, 0)
     kLineChart.value.clearData()
-    kLineChart.value.applyNewData((loadBars(new Date().getTime())) || [])
+    kLineChart.value.applyNewData((loadBars(new Date().getTime(), false)) || [])
   }
 
 })

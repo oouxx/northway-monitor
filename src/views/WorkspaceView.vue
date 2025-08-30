@@ -15,7 +15,9 @@
           <img src="../assets/wx.jpg" width="400px" />
           <template v-slot:reference>
             <el-button title="加入社群" circle>
-              <Flag />
+              <el-icon>
+                <Flag />
+              </el-icon>
             </el-button>
           </template>
         </el-popover>
@@ -23,7 +25,9 @@
           <img src="../assets/知识星球.jpg" width="400px" />
           <template v-slot:reference>
             <el-button title="知识星球提问" circle>
-              <Help />
+              <el-icon>
+                <Help />
+              </el-icon>
             </el-button>
           </template>
 
