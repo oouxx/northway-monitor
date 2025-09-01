@@ -57,14 +57,14 @@
       </div>
       <div class="ns-trade__trade-btn-wrap">
         <div class="ns-trade-button">
-          <NsButton :price="bkPrice || 0" :color="'rgba(196, 68, 66, 1)'" :label="'买开'" @click.native="buyOpen" />
+          <NsButton :price="bkPrice || 0" :color="'rgba(196, 68, 66, 1)'" :label="'买开'" @click="buyOpen" />
         </div>
         <div class="ns-trade-button">
-          <NsButton :price="skPrice || 0" :color="'rgba(64, 158, 95, 1)'" :label="'卖开'" @click.native="sellOpen" />
+          <NsButton :price="skPrice || 0" :color="'rgba(64, 158, 95, 1)'" :label="'卖开'" @click="sellOpen" />
         </div>
         <div class="ns-trade-button">
           <!-- 优先平今 -->
-          <NsButton :price="closePrice || 0" :reverseColor="true" :label="'平仓'" @click.native="closePosition" />
+          <NsButton :price="closePrice || 0" :reverseColor="true" :label="'平仓'" @click="closePosition" />
         </div>
       </div>
       <NsAccountDetail :tableContentHeight="flexibleTblHeight" :positionDescription="useAccount.curInfo.positions"

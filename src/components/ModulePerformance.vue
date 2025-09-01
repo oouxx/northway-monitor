@@ -140,12 +140,12 @@ onMounted(() => {
 onUnmounted(() => {
   dispose(chartId.value)
 })
-watch(props.moduleDealRecords, () => {
+watch(() => props.moduleDealRecords, () => {
   if (kLineChart.value) {
     updateChart()
   }
 })
-
+defineExpose({ refresh })
 </script>
 
 <style>

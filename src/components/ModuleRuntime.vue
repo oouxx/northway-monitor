@@ -7,7 +7,7 @@
     <div class="module-rt-wrapper">
       <div class="side-panel">
         <div class="side-panel_content">
-          <el-descriptions class="margin-top panel-header" :column="`${isMobile ? 2 : 3}`">
+          <el-descriptions class="margin-top panel-header" :column="isMobile ? 2 : 3">
             <template v-slot:title>
               模组用途
               <el-tag class="ml-10" :type="{ PLAYBACK: 'info', UAT: 'warning', PROD: '' }[module.usage]"
@@ -25,7 +25,7 @@
           <el-tabs v-model="infoTab" :stretch="true">
             <el-tab-pane name="moduleInfo" label="模组信息">
               <div class="description-wrapper">
-                <el-descriptions class="margin-top" :column="`${isMobile ? 2 : 3}`">
+                <el-descriptions class="margin-top" :column="isMobile ? 2 : 3">
                   <el-descriptions-item label="名称">{{ moduleRuntime.moduleName }}</el-descriptions-item>
                   <el-descriptions-item label="启停状态"><el-tag size="small"
                       :type="`${moduleRuntime.enabled ? 'success' : 'danger'}`">{{
@@ -96,7 +96,7 @@
               </div>
             </el-tab-pane>
             <el-tab-pane name="accountInfo" label="账户信息">
-              <el-descriptions v-for="(item, i) in accountInfo" :key="i" column="2">
+              <el-descriptions v-for="(item, i) in accountInfo" :key="i" :column=2>
                 <template v-slot:title>
                   {{ item.name }}
                 </template>
@@ -110,7 +110,7 @@
             </el-tab-pane>
             <el-tab-pane name="strategyInfo" label="策略信息">
               <div class="description-wrapper">
-                <el-descriptions class="margin-top" column="2">
+                <el-descriptions class="margin-top" :column=2>
                   <el-descriptions-item v-for="(item, i) in strategyInfo" :label="item.name" :key="i">
                     <el-popover v-if="(item.value instanceof Array)" placement="right" trigger="click">
                       <el-table :data="item.value" max-height="300px">
@@ -224,8 +224,8 @@
             <el-option :key="4" label="副图4" value="pane4" />
             <el-option :key="5" label="副图5" value="pane5" />
           </el-select>
-          <el-button icon="el-icon-plus" title="绘制指标" @click.native="addIndicator"></el-button>
-          <el-button icon="el-icon-minus" title="移除指标" @click.native="removeIndicator"></el-button>
+          <el-button icon="el-icon-plus" title="绘制指标" @click="addIndicator"></el-button>
+          <el-button icon="el-icon-minus" title="移除指标" @click="removeIndicator"></el-button>
           <el-popover>
             <el-form>
               <el-form-item label="线粗" size="small">
@@ -240,7 +240,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item style="margin-bottom: 0">
-                <el-button style="float: right" type="warning" @click.native="clearIndicators">清空指标</el-button>
+                <el-button style="float: right" type="warning" @click="clearIndicators">清空指标</el-button>
               </el-form-item>
             </el-form>
             <template v-slot:reference>
@@ -249,8 +249,8 @@
           </el-popover>
           <el-button :icon="`${holdingVisibleOnChart ? 'el-icon-data-board' : 'el-icon-data-line'}`"
             :title="`${holdingVisibleOnChart ? '隐藏持仓线' : '显示持仓线'}`"
-            @click.native="holdingVisibleOnChart = !holdingVisibleOnChart"></el-button>
-          <el-button icon="el-icon-download" title="下载数据" @click.native="exportData"></el-button>
+            @click="holdingVisibleOnChart = !holdingVisibleOnChart"></el-button>
+          <el-button icon="el-icon-download" title="下载数据" @click="exportData"></el-button>
         </div>
         <div id="module-k-line" class="kline-body" v-loading.lock="loading"
           element-loading-background="rgba(0, 0, 0, 0.5)">
@@ -607,7 +607,13 @@ watch(() => moduleTab.value, (val) => {
     setTimeout(() => {
       let table = dealTbl.value
       if (table) {
-        table.bodyWrapper.scrollTop = table.bodyWrapper.scrollHeight
+        // TODO 测试是否滚动底部
+        // 获取滚动容器
+        const scrollWrap = table.$el.querySelector('.el-scrollbar__wrap');
+        if (scrollWrap) {
+          // 设置滚动位置到底部:cite[5]:cite[6]:cite[8]
+          scrollWrap.scrollTop = scrollWrap.scrollHeight;
+        }
       }
     }, 50)
   }

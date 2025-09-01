@@ -122,7 +122,7 @@ let bidPrice = ref([0, 0, 0, 0, 0])
 let bidVol = ref([0, 0, 0, 0, 0])
 let lastPrice = ref(0)
 let volume = ref(0)
-watch(props.tick, (val) => {
+watch(() => props.tick, (val) => {
   askVol.value = val.askvolumeList
   askPrice.value = val.askpriceList
   bidPrice.value = val.bidpriceList

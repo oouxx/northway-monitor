@@ -125,7 +125,7 @@ watch(() => marketCurrentDataStore.lastBar, (bar) => {
     kLineChart.value.updateData(KLineUtils.createFromBar(bar))
   }
 })
-watch(() => marketCurrentDataStore.curUnifiedSymbol, (val) => {
+watch(() => marketCurrentDataStore.curUnifiedSymbol, async (val) => {
   if (!kLineChart.value) {
     const kLineChartLocal = init('update-k-line')
 
@@ -152,7 +152,8 @@ watch(() => marketCurrentDataStore.curUnifiedSymbol, (val) => {
   if (val) {
     kLineChart.value.setPriceVolumePrecision(props.precision, 0)
     kLineChart.value.clearData()
-    kLineChart.value.applyNewData((loadBars(new Date().getTime(), false)) || [])
+    const data = await loadBars(new Date().getTime())
+    kLineChart.value.applyNewData(data || [])
   }
 
 })

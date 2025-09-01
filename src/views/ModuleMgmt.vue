@@ -9,11 +9,11 @@
     <div class="mobile-header" v-if="isMobile">
       <el-input placeholder="可按模组名称筛选" prefix-icon="el-icon-search" v-model="query" clearable>
       </el-input>
-      <el-button icon="el-icon-plus" title="新建模组" size="small" @click.native="handleCreate"></el-button>
+      <el-button icon="el-icon-plus" title="新建模组" size="small" @click="handleCreate"></el-button>
     </div>
     <div v-if="isMobile" class="card-wrapper">
       <el-card class="box-card" v-for="(item, i) in filterModuleList" :key="i">
-        <el-descriptions :title="item.moduleName" :column="2" border>
+        <el-descriptions :title="item.moduleName" :column=2 border>
           <el-descriptions-item label="持仓状态">
             <el-tag size="small">{{
               !item.runtime ? '-' :
@@ -49,9 +49,9 @@
           </el-descriptions-item>
         </el-descriptions>
         <div class="card-buttons">
-          <el-button v-if="item.runtime && item.runtime.enabled" type="danger" @click.native="toggle(i, item)">停用
+          <el-button v-if="item.runtime && item.runtime.enabled" type="danger" @click="toggle(i, item)">停用
           </el-button>
-          <el-button v-if="item.runtime && !item.runtime.enabled" type="success" @click.native="toggle(i, item)">
+          <el-button v-if="item.runtime && !item.runtime.enabled" type="success" @click="toggle(i, item)">
             启用
           </el-button>
           <el-button v-if="item.runtime" @click="handlePerf(i, item)">运行状态
@@ -147,7 +147,7 @@
       </el-table-column>
       <el-table-column align="center" width="400px">
         <template v-slot:header>
-          <el-button id="createModule" size="small" type="primary" @click.native="handleCreate">新建</el-button>
+          <el-button id="createModule" size="small" type="primary" @click="handleCreate">新建</el-button>
           <el-popconfirm v-if="env === 'development'" class="ml-10" title="确定全部启用吗？" @confirm="enableAll">
             <template v-slot="reference">
               <el-button size="small" type="success">启用</el-button>
@@ -166,9 +166,9 @@
         </template>
         <template v-slot:default="scope">
           <el-button v-if="scope.row.runtime && scope.row.runtime.enabled" type="danger" size="small"
-            @click.native="toggle(scope.$index, scope.row)">停用</el-button>
+            @click="toggle(scope.$index, scope.row)">停用</el-button>
           <el-button v-if="scope.row.runtime && !scope.row.runtime.enabled" type="success" size="small"
-            @click.native="toggle(scope.$index, scope.row)">
+            @click="toggle(scope.$index, scope.row)">
             启用
           </el-button>
           <el-button v-if="scope.row.runtime" size="small" @click="handlePerf(scope.$index, scope.row)">运行状态</el-button>

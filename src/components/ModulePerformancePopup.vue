@@ -26,7 +26,7 @@ const props = defineProps({
   }
 })
 let chartContainer = reactive({})
-watch(props.visible, (val) => {
+watch(() => props.visible, (val) => {
   if (val) {
     nextTick(() => {
       chartContainer.refresh()
